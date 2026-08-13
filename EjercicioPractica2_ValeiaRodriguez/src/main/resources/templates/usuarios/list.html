@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<head th:replace="~{fragments/layout :: head('Usuarios')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="flex-grow-1 py-4">
+<div class="container-fluid px-4">
+
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="h3 mb-0"><i class="bi bi-people me-2 text-primary"></i>Gestión de Usuarios</h1>
+            <p class="text-muted small mb-0">Administra los usuarios del sistema</p>
+        </div>
+        <a th:href="@{/usuarios/nuevo}" class="btn btn-primary">
+            <i class="bi bi-person-plus me-1"></i>Nuevo Usuario
+        </a>
+    </div>
+
+    <div th:if="${exito}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i><span th:text="${exito}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card">
+        <div class="card-body p-0">
+            <table class="table table-hover table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="usuario : ${usuarios}">
+                        <td th:text="${usuario.id}"></td>
+                        <td><i class="bi bi-person-circle me-1 text-secondary"></i><span th:text="${usuario.nombre}"></span></td>
+                        <td th:text="${usuario.email}"></td>
+                        <td>
+                            <span th:if="${usuario.role != null}"
+                                  class="badge"
+                                  th:classappend="'badge-' + ${usuario.role.nombre}"
+                                  th:text="${usuario.role.nombre}"></span>
+                            <span th:if="${usuario.role == null}" class="text-muted small">Sin rol</span>
+                        </td>
+                        <td>
+                            <a th:href="@{/usuarios/{id}(id=${usuario.id})}"
+                               class="btn btn-sm btn-outline-secondary me-1" title="Ver">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a th:href="@{/usuarios/{id}/editar(id=${usuario.id})}"
+                               class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <form th:action="@{/usuarios/{id}/eliminar(id=${usuario.id})}"
+                                  method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('¿Eliminar este usuario?')" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(usuarios)}">
+                        <td colspan="5" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox fs-4 d-block mb-2"></i>No hay usuarios registrados.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
